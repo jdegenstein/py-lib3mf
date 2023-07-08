@@ -17,7 +17,7 @@ jobs:
     - name: Download release asset
       run: |
         curl -s https://api.github.com/repos/3MFConsortium/lib3mf/releases/tags/v2.2.0 \
-        | grep "lib3mf_sdk_v2.2.0.*zip" \
+        | grep "browser_download_url.*zip" \
         | cut -d : -f 2,3 \
         | tr -d \" \
         | wget -qi -
