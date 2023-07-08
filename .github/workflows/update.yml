@@ -1,0 +1,36 @@
+name: Update file from lib3mf
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+
+    - name: Install unzip
+      run: sudo apt-get install unzip
+
+    - name: Download release asset
+      run: |
+        curl -s https://api.github.com/repos/owner-of-lib3mf-repo/lib3mf/releases/tags/name-of-the-release \
+        | grep "browser_download_url.*zip" \
+        | cut -d : -f 2,3 \
+        | tr -d \" \
+        | wget -qi -
+      env:
+        GH_TOKEN: ${{ secrets.your-github-token }}
+
+    - name: Unzip release asset
+      run: unzip name-of-the-zip-file
+
+    - name: Commit and push
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add file-to-extract
+        git commit -m "Update file from lib3mf" -a
+        git push
