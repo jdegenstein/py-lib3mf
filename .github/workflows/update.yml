@@ -21,8 +21,6 @@ jobs:
         | cut -d : -f 2,3 \
         | tr -d \" \
         | wget -qi -
-      env:
-        GH_TOKEN: ${{ secrets.your-github-token }}
 
     - name: Unzip release asset
       run: "lib3mf_sdk_v2.2.0.zip"
