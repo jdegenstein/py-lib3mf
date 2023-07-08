@@ -16,8 +16,8 @@ jobs:
 
     - name: Download release asset
       run: |
-        curl -s https://api.github.com/repos/owner-of-lib3mf-repo/lib3mf/releases/tags/name-of-the-release \
-        | grep "browser_download_url.*zip" \
+        curl -s https://api.github.com/repos/3MFConsortium/lib3mf/releases/tags/v2.2.0 \
+        | grep "lib3mf_sdk_v2.2.0.*zip" \
         | cut -d : -f 2,3 \
         | tr -d \" \
         | wget -qi -
@@ -25,12 +25,12 @@ jobs:
         GH_TOKEN: ${{ secrets.your-github-token }}
 
     - name: Unzip release asset
-      run: unzip name-of-the-zip-file
+      run: "lib3mf_sdk_v2.2.0.zip"
 
     - name: Commit and push
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add file-to-extract
+        git add Bindings/Python/Lib3MF.py
         git commit -m "Update file from lib3mf" -a
         git push
