@@ -23,12 +23,13 @@ jobs:
         | wget -qi -
 
     - name: Unzip release asset
-      run: "lib3mf_sdk_v2.2.0.zip"
+      run: unzip "lib3mf_sdk_v2.2.0.zip"
 
     - name: Commit and push
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add Bindings/Python/Lib3MF.py
-        git commit -m "Update file from lib3mf" -a
+        git add Bin/*
+        git commit -m "Update files from lib3mf release" -a
         git push
