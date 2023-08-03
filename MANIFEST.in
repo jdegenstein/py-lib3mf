@@ -1,0 +1,3 @@
+include py_lib3mf/*.dll
+include py_lib3mf/*.dylib
+include py_lib3mf/*.so
