@@ -1,9 +1,6 @@
 [build-system]
 requires = [
     "setuptools>=45",
-    #"wheel",
-    #"setuptools_scm[toml]>=6.2",
-    #cibuildwheel,????
 ]
 
 build-backend = "setuptools.build_meta"
@@ -15,18 +12,13 @@ description = "A python package for Lib3MF tools"
 readme = "README.md"
 requires-python = ">=3.9"
 
-[tool.cibuildwheel]
-# We disable testing for the following wheels:
-# - MacOS X ARM (no native hardware, tests are skipped anyway, this avoids a warning)
-# - Linux AArch64 (no native hardware, tests take too long)
-# - MuslLinux (tests hang non-deterministically)
-test-skip = "*-macosx_arm64 *-manylinux_aarch64 *-musllinux_x86_64"
+[tool.setuptools]
+# ...
+# By default, include-package-data is true in pyproject.toml, so you do
+# NOT have to specify this line.
+include-package-data = true
 
-[tool.cibuildwheel.linux]
-archs = ["auto"]
-
-[tool.cibuildwheel.macos]
-archs = ["x86_64", "arm64"]
-
-[tool.cibuildwheel.windows]
-archs = ["auto"] #x86_64??
+[tool.setuptools.packages.find]
+# scanning for namespace packages is true by default in pyproject.toml, so
+# you do NOT need to include the following line.
+namespaces = true
