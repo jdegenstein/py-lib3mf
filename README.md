@@ -6,11 +6,11 @@ The recommended method for most users is to install **py-lib3mf** with one of th
 
 In Linux/MacOS, use the following command:
 ```
-python3 -m pip install git+https://github.com/jdegenstein/py-lib3mf
+python3 -m pip install py-lib3mf
 ```
 In Windows, use the following command:
 ```
-python -m pip install git+https://github.com/jdegenstein/py-lib3mf
+python -m pip install py-lib3mf
 ```
 If you receive errors about conflicting dependencies, you can retry the installation after having upgraded pip to the latest version with the following command:
 ```
