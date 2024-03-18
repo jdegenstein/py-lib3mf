@@ -1,5 +1,5 @@
 # py-lib3mf
-Minimal files required to use lib3mf in python. Provides a pip-installable package for the python API that wraps Lib3MF API available here: [https://github.com/3MFConsortium/lib3mf](https://github.com/3MFConsortium/lib3mf)
+Minimal files required to use lib3mf in python. Provides a pip-installable package for the python API that wraps Lib3MF API available here: [https://github.com/3MFConsortium/lib3mf](https://github.com/3MFConsortium/lib3mf) repo that is used to prepare the PyPI release is here [https://github.com/jdegenstein/py-lib3mf](https://github.com/jdegenstein/py-lib3mf)
 
 # Installation
 The recommended method for most users is to install **py-lib3mf** with one of the following two commands.
