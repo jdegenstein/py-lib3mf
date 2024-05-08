@@ -1,4 +1,4 @@
-py-lib3mf 2.2.0
+py-lib3mf 2.3.1
 
 Copyright 2022 jdegenstein
 
@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 -----------------------------------------
-lib3mf 2.2.0
+lib3mf 2.3.1
 https://github.com/3MFConsortium/lib3mf
 Copyright (C) 2019 3MF Consortium
 
