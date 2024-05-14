@@ -12,7 +12,7 @@ machine = platform.machine().lower()
 
 if system == "linux" and machine != "x86_64":
     raise OSError(f"Unsupported Machine Type: {machine}")
-elif system == "windows" and machine not in ("x86_64", "amd64")
+elif system == "windows" and machine not in ("x86_64", "amd64"):
     raise OSError(f"Unsupported Machine Type: {machine}")
 
 # skipping darwin machine check for now
