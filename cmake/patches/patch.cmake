@@ -36,12 +36,10 @@ endif()
 
 # --- Patch 2: libzip cmake-config.h.in (CRITICAL for WASM) ---
 set(FILE "${REAL_SOURCE_DIR}/Libraries/libzip/cmake-config.h.in")
-# Note: lib3mf structure puts libzip in Libraries/libzip. 
-# If that path fails, check if it's submodules/libzip or similar in the fetched source.
-# Based on OCP.wasm, it might be "submodules/libzip" or "Libraries/libzip".
-# Let's try to detect or just use the relative path found in lib3mf source.
-# The error log shows: _deps/lib3mf-src/Libraries/libzip/Include/zipint.h
-# So it is likely "Libraries/libzip".
+# Check if file exists in standard location, otherwise fallback to submodules path
+if(NOT EXISTS "${FILE}")
+    set(FILE "${REAL_SOURCE_DIR}/submodules/libzip/cmake-config.h.in")
+endif()
 
 if(EXISTS "${FILE}")
     file(READ "${FILE}" CONTENTS)
@@ -59,19 +57,20 @@ if(EXISTS "${FILE}")
         message(STATUS "No changes made to: ${FILE}")
     endif()
 else()
-     # Fallback: check submodules/libzip (OCP.wasm used this path)
-     set(FILE "${REAL_SOURCE_DIR}/submodules/libzip/cmake-config.h.in")
-     if(EXISTS "${FILE}")
-        file(READ "${FILE}" CONTENTS)
-        set(NEW_CONTENTS "${CONTENTS}")
-        string(REGEX REPLACE "#cmakedefine[ \t]+[A-Za-z0-9_]*_S\n" "// &" NEW_CONTENTS "${NEW_CONTENTS}")
-        string(REGEX REPLACE "#cmakedefine[ \t]+HAVE_ARC4RANDOM\n" "// &" NEW_CONTENTS "${NEW_CONTENTS}")
-        string(REGEX REPLACE "#cmakedefine[ \t]+HAVE_CLONEFILE\n" "// &" NEW_CONTENTS "${NEW_CONTENTS}")
-        if(NOT "${CONTENTS}" STREQUAL "${NEW_CONTENTS}")
-            file(WRITE "${FILE}" "${NEW_CONTENTS}")
-            message(STATUS "Patched: ${FILE}")
-        endif()
-     else()
-        message(WARNING "Could not find libzip/cmake-config.h.in to patch at ${REAL_SOURCE_DIR}")
-     endif()
+    message(WARNING "Could not find libzip/cmake-config.h.in to patch at ${REAL_SOURCE_DIR}")
+endif()
+
+# --- Patch 3: Fix missing <algorithm> include in NMR_ResourceDependencySorter.cpp (Fixes Aarch64 Build) ---
+set(FILE "${REAL_SOURCE_DIR}/Source/Model/Writer/v100/NMR_ResourceDependencySorter.cpp")
+if(EXISTS "${FILE}")
+    file(READ "${FILE}" CONTENTS)
+    if(NOT "${CONTENTS}" MATCHES "#include <algorithm>")
+        set(NEW_CONTENTS "#include <algorithm>\n${CONTENTS}")
+        file(WRITE "${FILE}" "${NEW_CONTENTS}")
+        message(STATUS "Patched: ${FILE} (Added <algorithm>)")
+    else()
+        message(STATUS "No changes made to: ${FILE} (Already has <algorithm>)")
+    endif()
+else()
+    message(WARNING "Could not find NMR_ResourceDependencySorter.cpp to patch at ${FILE}")
 endif()
