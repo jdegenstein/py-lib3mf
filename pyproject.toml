@@ -12,7 +12,9 @@ license = {text = "Apache-2.0"}
 
 [tool.scikit-build]
 cmake.version = ">=3.24"
-wheel.packages = ["py_lib3mf"] # Ensure it looks for the package here
+# CRITICAL: Empty list stops scikit-build from adding 'py_lib3mf' automatically.
+# We will populate the wheel entirely via CMake install commands.
+wheel.packages = []
 
 # Pass flags to CMake
 [tool.scikit-build.cmake.define]

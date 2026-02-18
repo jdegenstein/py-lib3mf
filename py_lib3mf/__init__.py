@@ -1,18 +1,20 @@
-__version__ = '2.3.1'
+__version__ = "2.4.1"
 
 import platform
 from . import Lib3MF
 
 system = platform.system().lower()
-
-if system not in ("linux", "darwin", "windows"):
-    raise OSError(f"Unsupported Operating System: {system}")
-
 machine = platform.machine().lower()
 
-if system == "linux" and machine != "x86_64":
-    raise OSError(f"Unsupported Machine Type: {machine}")
-elif system == "windows" and machine not in ("x86_64", "amd64"):
-    raise OSError(f"Unsupported Machine Type: {machine}")
+# Allow Linux, Darwin, Windows, AND Emscripten (WASM)
+if system not in ("linux", "darwin", "windows", "emscripten"):
+    raise OSError(f"Unsupported Operating System: {system}")
 
-# skipping darwin machine check for now
+# Relax machine checks to include aarch64/arm64 and wasm
+if system == "linux":
+    if machine not in ("x86_64", "aarch64", "arm64"):
+        raise OSError(f"Unsupported Machine Type: {machine}")
+elif system == "windows":
+    if machine not in ("x86_64", "amd64"):
+        raise OSError(f"Unsupported Machine Type: {machine}")
+# WASM (Emscripten) and Darwin (macOS) usually don't need strict machine checks here
