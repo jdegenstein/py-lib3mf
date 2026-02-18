@@ -17,3 +17,8 @@ wheel.packages = ["py_lib3mf"] # Ensure it looks for the package here
 # Pass flags to CMake
 [tool.scikit-build.cmake.define]
 CMAKE_BUILD_TYPE = "Release"
+# Fixes "Compatibility with CMake < 3.5" error on Aarch64
+CMAKE_POLICY_VERSION_MINIMUM = "3.5"
+# Fixes "arc4random" and other build errors by skipping unused tests/examples
+LIB3MF_TESTS = "OFF"
+LIB3MF_EXAMPLES = "OFF"
