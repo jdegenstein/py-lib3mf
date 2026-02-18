@@ -1,25 +1,19 @@
 [build-system]
-requires = [
-    "setuptools>=45",
-]
-
-build-backend = "setuptools.build_meta"
+requires = ["scikit-build-core==0.11.6"]
+build-backend = "scikit_build_core.build"
 
 [project]
 name = "py-lib3mf"
-version = "2.3.1"
-description = "A python package for Lib3MF tools"
+version = "2.4.1" # Upgraded to match lib3mf v2.4.1
+description = "Python bindings for Lib3MF"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = {text = "Apache-2.0"}
 
-[tool.setuptools]
-# ...
-# By default, include-package-data is true in pyproject.toml, so you do
-# NOT have to specify this line.
-include-package-data = true
+[tool.scikit-build]
+cmake.version = ">=3.24"
+wheel.packages = ["py_lib3mf"] # Ensure it looks for the package here
 
-[tool.setuptools.packages.find]
-# scanning for namespace packages is true by default in pyproject.toml, so
-# you do NOT need to include the following line.
-namespaces = true
+# Pass flags to CMake
+[tool.scikit-build.cmake.define]
+CMAKE_BUILD_TYPE = "Release"

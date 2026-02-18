@@ -1,6 +1,6 @@
 name: Wheel building and publishing
 
-on: [push, pull_request, workflow_dispatch] # TODO: update this later
+on: [workflow_dispatch] # TODO: update this later
 
 jobs:
   build_wheel:

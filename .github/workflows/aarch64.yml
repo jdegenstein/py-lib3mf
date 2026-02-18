@@ -1,0 +1,42 @@
+name: Build Linux Aarch64
+
+#on: [push, pull_request, workflow_dispatch]
+on: [workflow_dispatch]
+
+jobs:
+  build_aarch64:
+    name: Build Aarch64 Wheels
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Build for specific python versions requested
+        python: [cp310, cp311, cp312, cp313, cp314] 
+    
+    steps:
+      - uses: actions/checkout@v6
+
+      # Enable QEMU for Aarch64 emulation
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v3.3.1
+        env:
+          # Target Aarch64 Linux only
+          CIBW_ARCHS_LINUX: aarch64
+          CIBW_BUILD: ${{ matrix.python }}-manylinux_aarch64
+          
+          # Ensure necessary build tools are present in the docker container
+          CIBW_BEFORE_ALL_LINUX: >
+            yum install -y libuuid-devel || apt-get install -y uuid-dev
+          
+          # Use scikit-build-core settings
+          CIBW_ENVIRONMENT: >
+            CMAKE_BUILD_TYPE=Release
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: wheel-aarch64-${{ matrix.python }}
+          path: ./wheelhouse/*.whl

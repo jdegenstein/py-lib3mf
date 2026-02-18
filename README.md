@@ -16,3 +16,6 @@ If you receive errors about conflicting dependencies, you can retry the installa
 ```
 python3 -m pip install --upgrade pip
 ```
+
+## Acknowledgements
+* The WASM build infrastructure and CMake patching logic are adapted from [Yeicor/OCP.wasm](https://github.com/Yeicor/OCP.wasm).

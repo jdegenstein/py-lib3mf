@@ -1,0 +1,61 @@
+name: Build WASM (Pyodide)
+
+# on: [push, pull_request, workflow_dispatch]
+on: [workflow_dispatch]
+
+jobs:
+  build_wasm:
+    name: Build WASM for ${{ matrix.emsdk_version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Map EMSDK versions to Python versions based on Pyodide releases
+          # Pyodide 0.25 -> Python 3.12
+          #- emsdk_version: "3.1.46" 
+          #  python_version: "3.12"
+          #  pyodide_version: "0.25.0"
+          # Pyodide 0.24 -> Python 3.11
+          #- emsdk_version: "3.1.45"
+          #  python_version: "3.11"
+          #  pyodide_version: "0.24.1"
+          # Pyodide 0.29 -> Python 3.13
+          - emsdk_version: "4.0.9"
+            python_version: "3.13"
+            pyodide_version: "0.29.3"
+            
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install Pyodide Build Tools
+        run: |
+          pip install pyodide-build==0.32.0
+
+      - name: Build Wheel
+        run: |
+          # Install EMSDK
+          git clone https://github.com/emscripten-core/emsdk.git
+          cd emsdk
+          ./emsdk install ${{ matrix.emsdk_version }}
+          ./emsdk activate ${{ matrix.emsdk_version }}
+          source ./emsdk_env.sh
+          cd ..
+          
+          # Build
+          pyodide build --exports=whole_archive
+        env:
+          # Force CMake to use our patches
+          CFLAGS: "-O3"
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: wasm-wheel-${{ matrix.python_version }}
+          path: dist/*.whl
