@@ -73,12 +73,20 @@ else()
   message(STATUS "Configuring for Native/Aarch64...")
 
   # --- CRITICAL FIX: Disable Versioned Filenames ---
-  # Clears VERSION/SOVERSION properties so we get "lib3mf.so" only,
-  # instead of "lib3mf.so -> lib3mf.so.2 -> lib3mf.so.2.4.1"
+  # We clear these properties to encourage a simple filename, but we also 
+  # use a specific install strategy below to guarantee it.
   set_target_properties(lib3mf PROPERTIES VERSION "" SOVERSION "")
 
   # 1. Install the shared library to 'lib3mf'
-  install(INSTALL_ME TARGETS lib3mf DESTINATION "lib3mf")
+  # FIX: We use FILES "$<TARGET_FILE:lib3mf>" instead of TARGETS.
+  # This grabs the actual binary file and ignores any symlinks/namelinks.
+  # We also explicitly RENAME it to "lib3mf.so" to ensure the wheel structure is clean.
+  install(
+    INSTALL_ME 
+    FILES "$<TARGET_FILE:lib3mf>" 
+    DESTINATION "lib3mf"
+    RENAME "lib3mf.so"
+  )
 
   # 2. Locate Lib3MF.py (Dynamic Search)
   set(LIB3MF_PY_LOCATIONS
