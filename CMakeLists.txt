@@ -1,8 +1,22 @@
-
 cmake_minimum_required(VERSION 3.24)
 project(${SKBUILD_PROJECT_NAME} LANGUAGES C CXX VERSION ${SKBUILD_PROJECT_VERSION})
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+# --- CRITICAL FIX: Overload install command ---
+# Lib3MF's upstream CMakeLists.txt contains install rules that fail when built 
+# as a subproject (e.g., missing lib3mf.pc). This function intercepts all 
+# install() calls. It only executes those we explicitly mark with "INSTALL_ME".
+function(install)
+  if("${ARGV0}" STREQUAL "INSTALL_ME")
+    # This is our custom install call, forward it to the real _install command
+    list(SUBLIST ARGV 1 -1 rest_args)
+    _install(${rest_args})
+  else()
+    # This is an upstream install call (e.g. from lib3mf), ignore it
+    message(STATUS "Skipping upstream install rule for: ${ARGV}")
+  endif()
+endfunction()
 
 include(FetchContent)
 Set(FETCHCONTENT_QUIET FALSE)
@@ -23,7 +37,7 @@ FetchContent_MakeAvailable(lib3mf)
 if(EMSCRIPTEN)
   message(STATUS "Configuring for Emscripten (WASM)...")
 
-  # Download the original Manylinux wheel to "repack" (reuse python structure, replace binary)
+  # Download the original Manylinux wheel to "repack"
   FetchContent_Declare(
     lib3mf-wheel-original
     URL "https://github.com/3MFConsortium/lib3mf/releases/download/v2.4.1/lib3mf-2.4.1-py3-none-manylinux2014_x86_64.whl"
@@ -49,7 +63,7 @@ if(EMSCRIPTEN)
     # Apply the ctypes 32-bit patch (CRITICAL for WASM)
     COMMAND /bin/sh -c "patch -p1 '${WHEEL_CONTENTS_DIR}/lib3mf/Lib3MF.py' < '${CMAKE_CURRENT_LIST_DIR}/cmake/patches/Lib3MF.py.patch'"
     
-    # Copy the compiled WASM binary (built by FetchContent lib3mf above)
+    # Copy the compiled WASM binary
     COMMAND /bin/sh -c "cp '${lib3mf_BINARY_DIR}/lib3mf.so' '${WHEEL_CONTENTS_DIR}/lib3mf/lib3mf.so'"
     
     # Optional: Copy debug maps if they exist
@@ -61,32 +75,29 @@ if(EMSCRIPTEN)
   add_custom_target(lib3mf-wheel-target ALL DEPENDS "${WHEEL_CONTENTS_DIR}")
   
   # Install the constructed folder into the wheel
-  install(DIRECTORY "${WHEEL_CONTENTS_DIR}/" DESTINATION ".")
+  # Note the "INSTALL_ME" prefix to pass the override check
+  install(INSTALL_ME DIRECTORY "${WHEEL_CONTENTS_DIR}/" DESTINATION ".")
 
 # --- 3. Native / Aarch64 Build Strategy ---
 else()
   message(STATUS "Configuring for Native/Aarch64...")
 
   # For Aarch64, we rely on the FetchContent build of lib3mf defined above.
-  # We just need to install the shared library and the python wrapper from the source.
+  # We just need to install the shared library and the python wrapper.
 
   # 1. Install the shared library
-  install(TARGETS lib3mf DESTINATION "py_lib3mf")
+  install(INSTALL_ME TARGETS lib3mf DESTINATION "py_lib3mf")
 
-  # 2. Install the Python wrapper code (from the fetched source, NOT the wheel)
-  # Note: ocp.wasm patches Lib3MF.py for WASM, but for Aarch64 we want the standard one.
-  # However, py-lib3mf repo HAS a wrapper in `py_lib3mf/Lib3MF.py`.
-  # We should use the one from the lib3mf repo to ensure version match (v2.4.1), 
-  # OR use the one in this repo if it's updated. 
-  # Assuming we want to ship v2.4.1 logic:
-  
+  # 2. Install the Python wrapper code (from the fetched source)
   install(
+    INSTALL_ME 
     FILES "${lib3mf_SOURCE_DIR}/Bindings/Python/Lib3MF.py" 
     DESTINATION "py_lib3mf"
   )
   
   # Install the package init
   install(
+    INSTALL_ME 
     FILES "${CMAKE_CURRENT_SOURCE_DIR}/py_lib3mf/__init__.py"
     DESTINATION "py_lib3mf"
   )
