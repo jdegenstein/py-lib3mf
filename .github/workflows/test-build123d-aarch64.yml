@@ -34,6 +34,11 @@ jobs:
           # We install this FIRST so it satisfies the requirement before we resolve build123d deps
           echo "Installing custom py-lib3mf wheel..."
           uv pip install https://github.com/jdegenstein/py-lib3mf/releases/download/v2.4.1/py_lib3mf-2.4.1-cp313-cp313-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl
+
+          # build123d requires "lib3mf". We installed "py-lib3mf".
+          # We patch the dependency list so uv sees our package as the solution.
+          echo "Patching build123d requirement from lib3mf to py-lib3mf..."
+          sed -i 's/"lib3mf/"py-lib3mf/g' pyproject.toml
           
           # 3. Install build123d with dev dependencies
           # We use --system-site-packages or just rely on uv to respect the existing package
