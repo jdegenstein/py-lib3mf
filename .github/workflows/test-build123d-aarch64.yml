@@ -2,9 +2,9 @@ name: Test build123d (aarch64)
 
 on:
   workflow_dispatch: # Allow manual triggering
-  push:
-    paths:
-      - '.github/workflows/test-build123d-aarch64.yml'
+  # push:
+  #   paths:
+  #     - '.github/workflows/test-build123d-aarch64.yml'
 
 jobs:
   test_build123d_aarch64:
@@ -17,6 +17,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           repository: gumyr/build123d
+          path: build123d
           fetch-depth: 1
 
       - name: Install uv
