@@ -50,7 +50,10 @@ jobs:
           # 4. Verify lib3mf installation
           echo "Verifying lib3mf installation..."
           python -c "import lib3mf; print(f'Lib3MF loaded from: {lib3mf.__file__}')"
+
+          echo "recursive directory listing to debug pytest failure"
+          ls -alR
           
           # 5. Run Pytest
           echo "Running Tests..."
-          python -m pytest -n auto --benchmark-disable
+          python -m pytest -n 1 --benchmark-disable
