@@ -1,0 +1,50 @@
+name: Test build123d (aarch64)
+
+on:
+  workflow_dispatch: # Allow manual triggering
+  push:
+    paths:
+      - '.github/workflows/test-build123d-aarch64.yml'
+
+jobs:
+  test_build123d_aarch64:
+    name: Test build123d on aarch64 (Python 3.13)
+    # Uses GitHub's native ARM runner
+    runs-on: ubuntu-24.04-arm
+    
+    steps:
+      - name: Checkout build123d Repository
+        uses: actions/checkout@v6
+        with:
+          repository: gumyr/build123d
+          fetch-depth: 1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
+          python-version: "3.13"
+          activate-environment: "true"
+
+      - name: Install Dependencies
+        working-directory: build123d
+        run: |
+          # 2. Install Custom py-lib3mf aarch64 Wheel
+          # We install this FIRST so it satisfies the requirement before we resolve build123d deps
+          echo "Installing custom py-lib3mf wheel..."
+          uv pip install https://github.com/jdegenstein/py-lib3mf/releases/download/v2.4.1/py_lib3mf-2.4.1-cp313-cp313-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl
+          
+          # 3. Install build123d with dev dependencies
+          # We use --system-site-packages or just rely on uv to respect the existing package
+          echo "Installing build123d development dependencies..."
+          uv pip install -e ".[development]"
+    
+      - name: Run Tests
+        run: |
+          # 4. Verify lib3mf installation
+          echo "Verifying lib3mf installation..."
+          python -c "import lib3mf; print(f'Lib3MF loaded from: {lib3mf.__file__}')"
+          
+          # 5. Run Pytest
+          echo "Running Tests..."
+          python -m pytest -n auto --benchmark-disable
