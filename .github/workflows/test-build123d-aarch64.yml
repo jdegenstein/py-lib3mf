@@ -57,3 +57,9 @@ jobs:
           # 5. Run Pytest
           echo "Running Tests..."
           python -m pytest -n auto --benchmark-disable
+
+      - name: Setup tmate session for interactive debugging
+        uses: mxschmitt/action-tmate@v3
+        with:
+          # Optional: Limits the session to 30 minutes so you don't accidentally burn runner minutes if you walk away
+          limit-access-to-actor: true
