@@ -1,4 +1,4 @@
-__version__ = "2.4.1"
+__version__ = "2.5.0"
 
 import platform
 from . import Lib3MF
@@ -18,3 +18,4 @@ elif system == "windows":
     if machine not in ("x86_64", "amd64"):
         raise OSError(f"Unsupported Machine Type: {machine}")
 # WASM (Emscripten) and Darwin (macOS) usually don't need strict machine checks here
+
