@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "py-lib3mf"
-version = "2.4.1" # Upgraded to match lib3mf v2.4.1
+version = "2.5.0" # Upgraded to match lib3mf v2.5.0
 description = "Python bindings for Lib3MF"
 readme = "README.md"
 requires-python = ">=3.10"
