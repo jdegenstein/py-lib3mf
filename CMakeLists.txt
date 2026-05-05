@@ -52,7 +52,7 @@ if(EMSCRIPTEN)
     
     # Patch Python files for Emscripten
     COMMAND /bin/sh -c "sed -i 's/linux/emscripten/g;s/Linux/Emscripten/g' '${WHEEL_CONTENTS_DIR}/lib3mf/'*.py"
-    COMMAND /bin/sh -c "patch -p1 '${WHEEL_CONTENTS_DIR}/lib3mf/Lib3MF.py' < '${CMAKE_CURRENT_LIST_DIR}/cmake/patches/Lib3MF.py.patch'"
+    #COMMAND /bin/sh -c "patch -p1 '${WHEEL_CONTENTS_DIR}/lib3mf/Lib3MF.py' < '${CMAKE_CURRENT_LIST_DIR}/cmake/patches/Lib3MF.py.patch'"
     
     # Copy Compiled WASM
     COMMAND /bin/sh -c "cp '${lib3mf_BINARY_DIR}/lib3mf.so' '${WHEEL_CONTENTS_DIR}/lib3mf/lib3mf.so'"
