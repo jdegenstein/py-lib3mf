@@ -21,23 +21,23 @@ jobs:
           #  python_version: "3.11"
           #  pyodide_version: "0.24.1"
           # Pyodide 0.29 -> Python 3.13
-          - emsdk_version: "4.0.9"
+          - emsdk_version: "4.0.12"
             python_version: "3.13"
-            pyodide_version: "0.29.3"
+            pyodide_version: "0.29.4"
             
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
         with:
           fetch-depth: 0
 
       - name: Setup Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 #v6.2.0
         with:
           python-version: "3.13"
 
       - name: Install Pyodide Build Tools
         run: |
-          pip install pyodide-build==0.32.0
+          pip install pyodide-build==0.34.3
 
       - name: Build Wheel
         run: |
@@ -55,7 +55,7 @@ jobs:
           # Force CMake to use our patches
           CFLAGS: "-O3"
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a #v7.0.1
         with:
           name: wasm-wheel-${{ matrix.python_version }}
           path: dist/*.whl
